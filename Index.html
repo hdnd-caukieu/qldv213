@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hệ thống quản lý đảng viên — Quy định 213-QĐ/TW</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red-deep:#6B1015;
+    --red:#A91E22;
+    --gold:#C9A227;
+    --paper:#FAF7F2;
+    --ink:#241F1C;
+    --ink-soft:#5A5048;
+    --line:#DDD6C8;
+    --green:#2F6B4F;
+    --white:#FFFFFF;
+    --shadow: 0 2px 10px rgba(43,35,32,0.08);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Noto Sans', sans-serif; font-size:15px; line-height:1.5;
+  }
+  h1,h2,h3{font-family:'Noto Serif', serif; margin:0; color:var(--red-deep);}
+  .app-header{
+    background:linear-gradient(180deg, var(--red-deep) 0%, var(--red) 100%);
+    color:#fff; padding:18px 24px 14px;
+  }
+  .app-header-inner{max-width:1100px; margin:0 auto; display:flex; align-items:center; gap:14px;}
+  .star{width:30px; height:30px; flex-shrink:0;}
+  .app-header h1{color:#fff; font-size:19px; letter-spacing:.3px;}
+  .app-header .sub{font-size:12.5px; color:#F0DDBE; margin-top:2px;}
+  .gold-rule{height:3px; background:linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .wrap{max-width:1100px; margin:0 auto; padding:24px;}
+  .hidden{display:none !important;}
+
+  /* Login */
+  .login-card{
+    max-width:400px; margin:60px auto; background:#fff; border:1px solid var(--line);
+    border-radius:4px; padding:30px 28px; box-shadow:var(--shadow); position:relative;
+  }
+  .login-card::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:4px;
+    background:var(--gold); border-radius:4px 4px 0 0;
+  }
+  .login-card h2{font-size:18px; margin-bottom:4px;}
+  .login-card p.hint{color:var(--ink-soft); font-size:13px; margin:0 0 20px;}
+  label{display:block; font-size:13px; font-weight:600; color:var(--ink-soft); margin-bottom:5px; margin-top:14px;}
+  select, input, textarea{
+    width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:3px;
+    font-family:inherit; font-size:14.5px; background:#fff; color:var(--ink);
+  }
+  select:focus, input:focus, textarea:focus{outline:2px solid var(--gold); outline-offset:1px; border-color:var(--gold);}
+  button{
+    font-family:inherit; cursor:pointer; border:none; border-radius:3px; font-weight:600;
+  }
+  .btn-primary{
+    background:var(--red); color:#fff; padding:10px 18px; font-size:14.5px; width:100%; margin-top:20px;
+  }
+  .btn-primary:hover{background:var(--red-deep);}
+  .error-msg{color:var(--red); font-size:13px; margin-top:10px; min-height:16px;}
+
+  /* Top bar after login */
+  .topbar{
+    display:flex; justify-content:space-between; align-items:center;
+    background:#fff; border:1px solid var(--line); border-radius:4px; padding:12px 16px; margin-bottom:18px;
+  }
+  .topbar .who{font-size:14px;}
+  .topbar .who b{color:var(--red-deep);}
+  .badge{
+    display:inline-block; background:var(--gold); color:#3a2e05; font-size:11px; font-weight:700;
+    padding:2px 8px; border-radius:10px; margin-left:8px; letter-spacing:.3px;
+  }
+  .btn-outline{background:#fff; border:1px solid var(--line); color:var(--ink-soft); padding:7px 14px; font-size:13px;}
+  .btn-outline:hover{border-color:var(--red); color:var(--red);}
+
+  .tabs{display:flex; gap:4px; margin-bottom:16px; border-bottom:2px solid var(--line);}
+  .tab-btn{
+    background:transparent; padding:10px 18px; font-size:14px; color:var(--ink-soft);
+    border-bottom:2px solid transparent; margin-bottom:-2px;
+  }
+  .tab-btn.active{color:var(--red-deep); border-bottom-color:var(--red);}
+
+  .toolbar{display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap;}
+  .toolbar input[type=text]{flex:1; min-width:200px;}
+  .btn-add{background:var(--green); color:#fff; padding:9px 16px; font-size:14px; white-space:nowrap;}
+  .btn-add:hover{background:#245139;}
+
+  table{width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--line); border-radius:4px; overflow:hidden;}
+  th{
+    background:var(--red-deep); color:#fff; text-align:left; padding:10px 12px; font-size:12.5px;
+    font-weight:600; letter-spacing:.2px; text-transform:uppercase;
+  }
+  td{padding:10px 12px; border-top:1px solid var(--line); font-size:14px;}
+  tr.member-row{cursor:pointer;}
+  tr.member-row:hover{background:#FBF3E6;}
+  .status-pill{padding:3px 9px; border-radius:10px; font-size:11.5px; font-weight:600;}
+  .status-active{background:#E4F1EA; color:var(--green);}
+  .status-moved{background:#F1E4E4; color:var(--red);}
+  .status-paused{background:#F1EBD8; color:#7A5C10;}
+  .empty-state{padding:40px 20px; text-align:center; color:var(--ink-soft); background:#fff; border:1px dashed var(--line); border-radius:4px;}
+
+  /* Modal */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(36,31,28,.45); display:flex; align-items:flex-start;
+    justify-content:center; padding:40px 16px; overflow-y:auto; z-index:50;
+  }
+  .modal{
+    background:#fff; border-radius:4px; max-width:640px; width:100%; box-shadow:0 8px 30px rgba(0,0,0,.2);
+    position:relative;
+  }
+  .modal-head{
+    display:flex; justify-content:space-between; align-items:center; padding:16px 20px;
+    border-bottom:1px solid var(--line);
+  }
+  .modal-head h3{font-size:16px;}
+  .modal-close{background:none; color:var(--ink-soft); font-size:20px; line-height:1; padding:4px 8px;}
+  .modal-body{padding:20px;}
+  .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 16px;}
+  .form-grid .full{grid-column:1/-1;}
+  .modal-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:20px;}
+  .btn-cancel{background:#fff; border:1px solid var(--line); color:var(--ink-soft); padding:9px 16px;}
+  .btn-save{background:var(--red); color:#fff; padding:9px 18px;}
+  .btn-save:hover{background:var(--red-deep);}
+
+  .nx-section{margin-top:24px; border-top:2px solid var(--line); padding-top:16px;}
+  .nx-item{border:1px solid var(--line); border-radius:3px; padding:10px 12px; margin-bottom:8px; font-size:13.5px;}
+  .nx-item .meta{color:var(--ink-soft); font-size:12px; margin-bottom:3px;}
+  .nx-type{font-weight:700; color:var(--red-deep);}
+  .nx-form{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; align-items:flex-end;}
+  .nx-form > div{flex:1; min-width:120px;}
+  .nx-form button{padding:9px 16px; background:var(--green); color:#fff; font-size:13.5px;}
+  .tc-item{border:1px solid var(--line); border-radius:3px; padding:10px 12px; margin-bottom:8px; background:#FCFAF6;}
+  .tc-item .tc-label{font-size:13px; font-weight:600; color:var(--ink); margin-bottom:8px; line-height:1.4;}
+  .tc-options{display:flex; gap:16px; flex-wrap:wrap;}
+  .tc-options label{display:flex; align-items:center; gap:5px; font-weight:400; font-size:13px; margin:0; color:var(--ink-soft); cursor:pointer;}
+  .tc-options input[type=radio]{width:auto; margin:0;}
+  .nx-item .tc-summary{margin:6px 0; font-size:13px; color:var(--ink-soft);}
+  .nx-item .tc-summary span{margin-right:14px;}
+  .nx-item .btn-print{background:none; border:1px solid var(--line); color:var(--ink-soft); font-size:12px; padding:4px 10px; margin-top:6px; margin-right:6px;}
+  .nx-item .btn-print:hover{border-color:var(--red); color:var(--red);}
+  .nx-item .btn-edit{background:none; border:1px solid var(--line); color:var(--green); font-size:12px; padding:4px 10px; margin-top:6px; margin-right:6px;}
+  .nx-item .btn-edit:hover{border-color:var(--green);}
+  .nx-item .btn-del{background:none; border:1px solid var(--line); color:var(--red); font-size:12px; padding:4px 10px; margin-top:6px;}
+  .nx-item .btn-del:hover{border-color:var(--red); background:#FBEEEE;}
+
+  /* Report */
+  .report-summary{display:flex; gap:14px; margin-bottom:18px; flex-wrap:wrap;}
+  .stat-card{background:#fff; border:1px solid var(--line); border-radius:4px; padding:14px 18px; min-width:140px;}
+  .stat-card .num{font-family:'Noto Serif',serif; font-size:26px; color:var(--red-deep); font-weight:700;}
+  .stat-card .lbl{font-size:12px; color:var(--ink-soft); margin-top:2px;}
+
+  @media (max-width:640px){
+    .form-grid{grid-template-columns:1fr;}
+    .topbar{flex-direction:column; align-items:flex-start; gap:10px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="app-header-inner">
+    <svg class="star" viewBox="0 0 100 100"><polygon points="50,3 61,38 98,38 68,60 79,95 50,73 21,95 32,60 2,38 39,38"
+      fill="#C9A227"/></svg>
+    <div>
+      <h1>HỆ THỐNG QUẢN LÝ ĐẢNG VIÊN</h1>
+      <div class="sub">Theo Quy định số 213-QĐ/TW ngày 02/01/2020 của Bộ Chính trị</div>
+    </div>
+  </div>
+</div>
+<div class="gold-rule"></div>
+
+<div class="wrap">
+
+  <!-- LOGIN -->
+  <div id="loginView" class="login-card">
+    <h2>Đăng nhập theo khu phố</h2>
+    <p class="hint">Chọn khu phố và nhập mã PIN được cấp để truy cập dữ liệu.</p>
+    <label for="loginKhuPho">Khu phố / Đơn vị</label>
+    <select id="loginKhuPho"><option value="">— Đang tải danh sách —</option></select>
+    <label for="loginPin">Mã PIN</label>
+    <input type="password" id="loginPin" maxlength="4" inputmode="numeric" placeholder="••••">
+    <button class="btn-primary" onclick="doLogin()">Đăng nhập</button>
+    <div class="error-msg" id="loginError"></div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="mainView" class="hidden">
+    <div class="topbar">
+      <div class="who">Đơn vị: <b id="whoKhuPho"></b><span id="adminBadge" class="badge hidden">QUẢN TRỊ</span></div>
+      <button class="btn-outline" onclick="doLogout()">Đăng xuất</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" id="tabBtnList" onclick="switchTab('list')">Danh sách đảng viên</button>
+      <button class="tab-btn hidden" id="tabBtnReport" onclick="switchTab('report')">Báo cáo tổng hợp</button>
+    </div>
+
+    <!-- TAB: LIST -->
+    <div id="tabList">
+      <div class="toolbar">
+        <input type="text" id="searchBox" placeholder="Tìm theo họ tên..." oninput="renderMembers()">
+        <input type="text" id="filterKhuPho" class="hidden" list="khuPhoDatalist" placeholder="Tìm theo khu phố..." style="max-width:200px;" oninput="renderMembers()">
+        <datalist id="khuPhoDatalist"></datalist>
+        <button class="btn-outline" onclick="exportToWord()">⭳ Xuất file</button>
+        <button class="btn-add" onclick="openMemberModal(null)">+ Thêm đảng viên</button>
+      </div>
+      <div id="tableWrap"></div>
+    </div>
+
+    <!-- TAB: REPORT (admin) -->
+    <div id="tabReport" class="hidden">
+      <div style="text-align:right; margin-bottom:12px;">
+        <button class="btn-outline" onclick="exportReportToWord()">⭳ Xuất báo cáo (Word)</button>
+      </div>
+      <div id="reportContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modalOverlay" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">Thêm đảng viên</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="memberFormArea">
+      <div class="form-grid">
+        <div><label>Họ và tên</label><input type="text" id="f_HoTen"></div>
+        <div><label>Ngày sinh</label><input type="text" id="f_NgaySinh" placeholder="dd/mm/yyyy"></div>
+        <div id="f_KhuPho_wrap"><label>Khu phố</label><input type="text" id="f_KhuPho"></div>
+        <div><label>Số điện thoại</label><input type="text" id="f_SoDienThoai"></div>
+        <div class="full"><label>Cơ quan/đơn vị giới thiệu đến</label><input type="text" id="f_CoQuanGioiThieu"></div>
+        <div><label>Chức vụ tại cơ quan</label><input type="text" id="f_ChucVuCoQuan"></div>
+        <div><label>Ngày giới thiệu về</label><input type="text" id="f_NgayGioiThieuVe" placeholder="dd/mm/yyyy"></div>
+        <div class="full"><label>Trạng thái</label>
+          <select id="f_TrangThai">
+            <option>Đang sinh hoạt</option>
+            <option>Tạm dừng</option>
+            <option>Đã chuyển đi</option>
+          </select>
+        </div>
+        <div class="full"><label>Ghi chú</label><textarea id="f_GhiChu" rows="2"></textarea></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Huỷ</button>
+        <button class="btn-save" onclick="saveMember()">Lưu</button>
+      </div>
+      </div>
+
+      <div id="nxSection" class="nx-section hidden">
+        <h3 style="font-size:15px; margin-bottom:10px;">Nhận xét đảng viên nơi cư trú (theo mẫu phiếu)</h3>
+        <div id="nxList"></div>
+        <div id="nxFormTitle" style="font-size:13.5px; font-weight:600; color:var(--red-deep); margin-bottom:6px;">Thêm nhận xét mới</div>
+        <div class="nx-form" style="margin-bottom:14px;">
+          <div>
+            <label>Loại</label>
+            <select id="nx_Loai"><option>Định kỳ</option><option>Đột xuất</option></select>
+          </div>
+          <div>
+            <label>Ngày nhận xét</label>
+            <input type="text" id="nx_Ngay" placeholder="dd/mm/yyyy">
+          </div>
+        </div>
+        <div id="nxCriteriaForm"></div>
+        <div style="margin-top:6px;">
+          <label>7. Nhận xét khác</label>
+          <textarea id="nx_NhanXetKhac" rows="2"></textarea>
+        </div>
+        <div style="text-align:right; margin-top:12px;">
+          <button id="nxCancelEditBtn" onclick="cancelEditNhanXet()" class="hidden" style="padding:9px 16px; background:#fff; border:1px solid var(--line); color:var(--ink-soft); font-size:13.5px; margin-right:8px;">Huỷ sửa</button>
+          <button id="nxSaveBtn" onclick="addNhanXet()" style="padding:9px 18px; background:var(--green); color:#fff; font-size:13.5px;">+ Ghi nhận xét theo mẫu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbyhWV2hrhK_Gm9nZJfZyTZG86bkLfnsq_VELT6jIdl70D8GVBd3HvhhL1NDG-FSPFaofw/exec";
+
+  let auth = null;      // { khuPho, pin, vaiTro }
+  let members = [];
+  let editingId = null;
+
+  // Dùng JSONP (tải qua thẻ <script>) thay vì fetch()/XMLHttpRequest, vì
+  // Apps Script không gửi kèm header CORS nên fetch/XHR bị trình duyệt chặn.
+  // Thẻ <script> không bị giới hạn CORS nên luôn gọi được.
+  let jsonpCounter = 0;
+  function jsonpRequest(params){
+    return new Promise((resolve, reject) => {
+      const cbName = '__cb_' + (Date.now()) + '_' + (jsonpCounter++);
+      const timeout = setTimeout(() => {
+        cleanup();
+        reject(new Error('Hết thời gian chờ phản hồi từ máy chủ.'));
+      }, 15000);
+
+      function cleanup(){
+        clearTimeout(timeout);
+        delete window[cbName];
+        if(script.parentNode) script.parentNode.removeChild(script);
+      }
+
+      window[cbName] = function(data){
+        cleanup();
+        resolve(data);
+      };
+
+      const qs = new URLSearchParams(params);
+      qs.set('callback', cbName);
+      const script = document.createElement('script');
+      script.src = API_URL + '?' + qs.toString();
+      script.onerror = function(){
+        cleanup();
+        reject(new Error('Không kết nối được máy chủ. Kiểm tra lại URL hoặc mạng.'));
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  async function apiCall(payload){
+    const full = Object.assign({ khuPho: auth ? auth.khuPho : '', pin: auth ? auth.pin : '' }, payload);
+    try{
+      return await jsonpRequest({ action: full.action, payload: JSON.stringify(full) });
+    }catch(e){
+      return { status:'error', message: e.message };
+    }
+  }
+
+  // ---- init: load khu pho list ----
+  (async function initLogin(){
+    try{
+      const r = await apiCall({ action:'listKhuPho' });
+      const sel = document.getElementById('loginKhuPho');
+      sel.innerHTML = '<option value="">— Chọn khu phố / đơn vị —</option>';
+      if(r.status === 'ok'){
+        r.data.forEach(name => {
+          const o = document.createElement('option');
+          o.value = name; o.textContent = name;
+          sel.appendChild(o);
+        });
+      } else {
+        sel.innerHTML = '<option value="">Không tải được danh sách</option>';
+      }
+    }catch(e){
+      document.getElementById('loginKhuPho').innerHTML = '<option value="">Lỗi kết nối máy chủ</option>';
+    }
+  })();
+
+  async function doLogin(){
+    const khuPho = document.getElementById('loginKhuPho').value;
+    const pin = document.getElementById('loginPin').value.trim();
+    const errBox = document.getElementById('loginError');
+    errBox.textContent = '';
+    if(!khuPho || !pin){ errBox.textContent = 'Vui lòng chọn khu phố và nhập mã PIN.'; return; }
+    const r = await apiCall({ action:'login', khuPho, pin });
+    if(r.valid){
+      auth = { khuPho: r.khuPho, pin, vaiTro: r.vaiTro };
+      document.getElementById('loginView').classList.add('hidden');
+      document.getElementById('mainView').classList.remove('hidden');
+      document.getElementById('whoKhuPho').textContent = auth.khuPho;
+      if(auth.vaiTro === 'Admin'){
+        document.getElementById('adminBadge').classList.remove('hidden');
+        document.getElementById('tabBtnReport').classList.remove('hidden');
+        document.getElementById('filterKhuPho').classList.remove('hidden');
+        const dataList = document.getElementById('khuPhoDatalist');
+        const kpList = await apiCall({ action:'listKhuPho' });
+        if(kpList.status === 'ok'){
+          kpList.data.forEach(name => {
+            const o = document.createElement('option');
+            o.value = name;
+            dataList.appendChild(o);
+          });
+        }
+      }
+      loadMembers();
+    } else {
+      errBox.textContent = r.message || 'Sai khu phố hoặc mã PIN.';
+    }
+  }
+
+  function doLogout(){
+    auth = null; members = [];
+    document.getElementById('loginPin').value = '';
+    document.getElementById('mainView').classList.add('hidden');
+    document.getElementById('loginView').classList.remove('hidden');
+    document.getElementById('adminBadge').classList.add('hidden');
+    document.getElementById('tabBtnReport').classList.add('hidden');
+    switchTab('list');
+  }
+
+  function switchTab(tab){
+    document.getElementById('tabList').classList.toggle('hidden', tab !== 'list');
+    document.getElementById('tabReport').classList.toggle('hidden', tab !== 'report');
+    document.getElementById('tabBtnList').classList.toggle('active', tab === 'list');
+    document.getElementById('tabBtnReport').classList.toggle('active', tab === 'report');
+    if(tab === 'report') loadReport();
+  }
+
+  // ---- members ----
+  async function loadMembers(){
+    const r = await apiCall({ action:'getMembers' });
+    members = (r.status === 'ok') ? r.data : [];
+    renderMembers();
+  }
+
+  function statusPillClass(s){
+    if(s === 'Đang sinh hoạt') return 'status-active';
+    if(s === 'Đã chuyển đi') return 'status-moved';
+    return 'status-paused';
+  }
+
+  function renderMembers(){
+    const q = document.getElementById('searchBox').value.trim().toLowerCase();
+    const kpQuery = auth.vaiTro === 'Admin' ? document.getElementById('filterKhuPho').value.trim().toLowerCase() : '';
+    const filtered = members.filter(m =>
+      (m.HoTen || '').toLowerCase().includes(q) &&
+      (!kpQuery || (m.KhuPho || '').toLowerCase().includes(kpQuery))
+    );
+    const wrap = document.getElementById('tableWrap');
+    if(filtered.length === 0){
+      wrap.innerHTML = '<div class="empty-state">Chưa có đảng viên nào. Nhấn "+ Thêm đảng viên" để bắt đầu nhập.</div>';
+      return;
+    }
+    const showKhuPho = auth.vaiTro === 'Admin';
+    let html = '<div style="overflow-x:auto;"><table style="min-width:1100px;"><thead><tr><th>Họ và tên</th>' +
+      (showKhuPho ? '<th>Khu phố</th>' : '') +
+      '<th>Ngày sinh</th><th>Cơ quan giới thiệu đến</th><th>Chức vụ</th><th>Ngày về</th><th>SĐT</th><th>Trạng thái</th><th>Ghi chú</th><th>Nhận xét</th></tr></thead><tbody>';
+    filtered.forEach(m => {
+      html += '<tr class="member-row" onclick="openMemberModal(\'' + m.ID + '\',\'full\')">' +
+        '<td>' + escapeHtml(m.HoTen) + '</td>' +
+        (showKhuPho ? '<td>' + escapeHtml(m.KhuPho) + '</td>' : '') +
+        '<td>' + escapeHtml(m.NgaySinh) + '</td>' +
+        '<td>' + escapeHtml(m.CoQuanGioiThieu) + '</td>' +
+        '<td>' + escapeHtml(m.ChucVuCoQuan) + '</td>' +
+        '<td>' + escapeHtml(m.NgayGioiThieuVe) + '</td>' +
+        '<td>' + escapeHtml(m.SoDienThoai) + '</td>' +
+        '<td><span class="status-pill ' + statusPillClass(m.TrangThai) + '">' + escapeHtml(m.TrangThai) + '</span></td>' +
+        '<td>' + escapeHtml(m.GhiChu) + '</td>' +
+        '<td><button class="btn-outline" style="padding:5px 12px; font-size:12.5px;" onclick="event.stopPropagation(); openMemberModal(\'' + m.ID + '\',\'nx\')">Nhận xét</button></td>' +
+        '</tr>';
+    });
+    html += '</tbody></table></div>';
+    wrap.innerHTML = html;
+    window.__lastFilteredMembers = filtered;
+  }
+
+  function exportToWord(){
+    const rows = window.__lastFilteredMembers || [];
+    if(rows.length === 0){ alert('Không có dữ liệu để xuất.'); return; }
+    const showKhuPho = auth.vaiTro === 'Admin';
+    let html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+      '<head><meta charset="utf-8"><title>Danh sách đảng viên</title></head><body style="font-family:\'Times New Roman\',serif; font-size:13px;">';
+    html += '<h3 style="text-align:center;">DANH SÁCH ĐẢNG VIÊN THEO QUY ĐỊNH 213-QĐ/TW' +
+      (showKhuPho ? '' : ' — ' + escapeHtml(auth.khuPho)) + '</h3>';
+    html += '<table border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse; width:100%;"><tr>' +
+      '<th>STT</th><th>Họ và tên</th>' + (showKhuPho ? '<th>Khu phố</th>' : '') +
+      '<th>Ngày sinh</th><th>Cơ quan giới thiệu đến</th><th>Ngày về</th><th>SĐT</th><th>Trạng thái</th><th>Ghi chú</th></tr>';
+    rows.forEach((m, i) => {
+      html += '<tr><td>' + (i+1) + '</td><td>' + escapeHtml(m.HoTen) + '</td>' +
+        (showKhuPho ? '<td>' + escapeHtml(m.KhuPho) + '</td>' : '') +
+        '<td>' + escapeHtml(m.NgaySinh) + '</td><td>' + escapeHtml(m.CoQuanGioiThieu) + '</td>' +
+        '<td>' + escapeHtml(m.NgayGioiThieuVe) + '</td><td>' + escapeHtml(m.SoDienThoai) + '</td>' +
+        '<td>' + escapeHtml(m.TrangThai) + '</td><td>' + escapeHtml(m.GhiChu) + '</td></tr>';
+    });
+    html += '</table></body></html>';
+    const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'DanhSachDangVien_' + (showKhuPho ? 'TongHop' : auth.khuPho) + '.doc';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function escapeHtml(s){
+    return (s === undefined || s === null) ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function openMemberModal(id, mode){
+    mode = mode || 'full';
+    editingId = id;
+    editingNxId = null;
+    document.getElementById('nxFormTitle').textContent = 'Thêm nhận xét mới';
+    document.getElementById('nxSaveBtn').textContent = '+ Ghi nhận xét theo mẫu';
+    document.getElementById('nxCancelEditBtn').classList.add('hidden');
+    const m = id ? members.find(x => x.ID === id) : null;
+    document.getElementById('memberFormArea').classList.toggle('hidden', mode === 'nx');
+    if(mode === 'nx'){
+      document.getElementById('modalTitle').textContent = 'Nhận xét: ' + (m ? m.HoTen : '');
+    } else {
+      document.getElementById('modalTitle').textContent = id ? 'Sửa thông tin đảng viên' : 'Thêm đảng viên';
+    }
+    const khuPhoWrap = document.getElementById('f_KhuPho_wrap');
+    const khuPhoInput = document.getElementById('f_KhuPho');
+    if(auth.vaiTro === 'Admin'){
+      khuPhoWrap.classList.remove('hidden'); khuPhoInput.disabled = false;
+    } else {
+      khuPhoWrap.classList.remove('hidden'); khuPhoInput.disabled = true;
+    }
+    if(id){
+      document.getElementById('f_HoTen').value = m.HoTen || '';
+      document.getElementById('f_NgaySinh').value = m.NgaySinh || '';
+      document.getElementById('f_KhuPho').value = m.KhuPho || '';
+      document.getElementById('f_SoDienThoai').value = m.SoDienThoai || '';
+      document.getElementById('f_CoQuanGioiThieu').value = m.CoQuanGioiThieu || '';
+      document.getElementById('f_ChucVuCoQuan').value = m.ChucVuCoQuan || '';
+      document.getElementById('f_NgayGioiThieuVe').value = m.NgayGioiThieuVe || '';
+      document.getElementById('f_TrangThai').value = m.TrangThai || 'Đang sinh hoạt';
+      document.getElementById('f_GhiChu').value = m.GhiChu || '';
+      document.getElementById('nxSection').classList.toggle('hidden', mode !== 'nx');
+      if(mode === 'nx') loadNhanXet(id);
+    } else {
+      ['f_HoTen','f_NgaySinh','f_SoDienThoai','f_CoQuanGioiThieu','f_ChucVuCoQuan','f_NgayGioiThieuVe','f_GhiChu']
+        .forEach(id2 => document.getElementById(id2).value = '');
+      document.getElementById('f_KhuPho').value = auth.vaiTro === 'Admin' ? '' : auth.khuPho;
+      document.getElementById('f_TrangThai').value = 'Đang sinh hoạt';
+      document.getElementById('nxSection').classList.add('hidden');
+    }
+    document.getElementById('modalOverlay').classList.remove('hidden');
+  }
+
+  function closeModal(){
+    document.getElementById('modalOverlay').classList.add('hidden');
+    editingId = null;
+  }
+
+  async function saveMember(){
+    const member = {
+      HoTen: document.getElementById('f_HoTen').value.trim(),
+      NgaySinh: document.getElementById('f_NgaySinh').value.trim(),
+      KhuPho: document.getElementById('f_KhuPho').value.trim(),
+      CoQuanGioiThieu: document.getElementById('f_CoQuanGioiThieu').value.trim(),
+      NgayGioiThieuVe: document.getElementById('f_NgayGioiThieuVe').value.trim(),
+      SoDienThoai: document.getElementById('f_SoDienThoai').value.trim(),
+      ChucVuCoQuan: document.getElementById('f_ChucVuCoQuan').value.trim(),
+      TrangThai: document.getElementById('f_TrangThai').value,
+      GhiChu: document.getElementById('f_GhiChu').value.trim()
+    };
+    if(!member.HoTen){ alert('Vui lòng nhập họ và tên.'); return; }
+    let r;
+    if(editingId){
+      r = await apiCall({ action:'updateMember', memberId: editingId, member });
+    } else {
+      r = await apiCall({ action:'addMember', member });
+    }
+    if(r.status === 'ok'){
+      closeModal();
+      loadMembers();
+    } else {
+      alert(r.message || 'Có lỗi khi lưu dữ liệu.');
+    }
+  }
+
+  // ---- nhan xet theo mẫu 6 tiêu chí ----
+  const TIEU_CHI = [
+    { key:'TieuChi1', label:'1. Nêu gương về phẩm chất chính trị, đạo đức, lối sống và phát huy vai trò tiền phong, gương mẫu của người cán bộ, đảng viên trước nhân dân cư trú.', options:['Nêu gương tốt','Nêu gương','Chưa nêu gương'] },
+    { key:'TieuChi2', label:'2. Gương mẫu thực hiện nghĩa vụ công dân; tuyên truyền, vận động gia đình và nhân dân thực hiện chủ trương, đường lối của Đảng, chính sách, pháp luật của Nhà nước và quy định địa phương.', options:['Gương mẫu đi đầu','Gương mẫu','Chưa gương mẫu'] },
+    { key:'TieuChi3', label:'3. Tham gia đầy đủ, nghiêm túc các cuộc họp định kỳ và các cuộc họp khác do cấp ủy nơi cư trú triệu tập.', options:['Tham gia đầy đủ','Tham gia chưa đầy đủ','Không tham gia'] },
+    { key:'TieuChi4', label:'4. Thường xuyên giữ mối liên hệ với chi ủy, tổ trưởng tổ dân phố, ban công tác mặt trận nơi cư trú để nắm bắt tình hình nhân dân.', options:['Thường xuyên, tích cực','Thường xuyên','Chưa thường xuyên'] },
+    { key:'TieuChi5', label:'5. Tuyên truyền, vận động nhân dân góp ý xây dựng Đảng, xây dựng chính quyền cơ sở, giám sát cán bộ, đảng viên.', options:['Rất tích cực','Tích cực','Chưa tích cực'] },
+    { key:'TieuChi6', label:'6. Đề nghị cấp ủy cơ sở nơi đảng viên công tác.', options:['Biểu dương','Không đề nghị','Xem xét xử lý'] }
+  ];
+
+  let currentNxList = [];
+  let editingNxId = null;
+
+  function renderNxCriteriaForm(nx){
+    const box = document.getElementById('nxCriteriaForm');
+    box.innerHTML = TIEU_CHI.map(tc =>
+      '<div class="tc-item"><div class="tc-label">' + escapeHtml(tc.label) + '</div>' +
+      '<div class="tc-options">' + tc.options.map((opt,i) => {
+        const isChecked = nx ? (nx[tc.key] === opt) : (i === 0);
+        return '<label><input type="radio" name="' + tc.key + '" value="' + escapeHtml(opt) + '"' + (isChecked ? ' checked' : '') + '> ' + escapeHtml(opt) + '</label>';
+      }).join('') + '</div></div>'
+    ).join('');
+  }
+  renderNxCriteriaForm();
+
+  async function loadNhanXet(memberId){
+    const r = await apiCall({ action:'getNhanXet', memberId });
+    currentNxList = (r.status === 'ok') ? r.data : [];
+    const box = document.getElementById('nxList');
+    if(currentNxList.length === 0){
+      box.innerHTML = '<div style="color:var(--ink-soft); font-size:13px; margin-bottom:10px;">Chưa có nhận xét nào.</div>';
+      return;
+    }
+    box.innerHTML = currentNxList.map(nx => {
+      const canEdit = auth.vaiTro === 'Admin' || auth.khuPho === nx.NguoiNhanXet;
+      return '<div class="nx-item"><div class="meta"><span class="nx-type">' + escapeHtml(nx.Loai) + '</span> · ' +
+        escapeHtml(nx.NgayNhanXet) + ' · ' + escapeHtml(nx.NguoiNhanXet) + '</div>' +
+        '<div class="tc-summary">' + TIEU_CHI.map(tc => nx[tc.key] ? '<span>' + escapeHtml(nx[tc.key]) + '</span>' : '').join('') + '</div>' +
+        (nx.NhanXetKhac ? '<div>' + escapeHtml(nx.NhanXetKhac) + '</div>' : '') +
+        '<div style="margin-top:4px;">' +
+        '<button class="btn-print" onclick="printPhieuById(\'' + nx.ID + '\')">In phiếu</button>' +
+        (canEdit ? '<button class="btn-edit" onclick="editNhanXetStart(\'' + nx.ID + '\')">Sửa</button>' +
+          '<button class="btn-del" onclick="deleteNhanXetConfirm(\'' + nx.ID + '\')">Xoá</button>' : '') +
+        '</div></div>';
+    }).join('');
+  }
+
+  function printPhieuById(id){
+    const nx = currentNxList.find(x => x.ID === id);
+    if(nx) printPhieu(nx);
+  }
+
+  function editNhanXetStart(id){
+    const nx = currentNxList.find(x => x.ID === id);
+    if(!nx) return;
+    editingNxId = id;
+    document.getElementById('nx_Loai').value = nx.Loai || 'Định kỳ';
+    document.getElementById('nx_Ngay').value = nx.NgayNhanXet || '';
+    document.getElementById('nx_NhanXetKhac').value = nx.NhanXetKhac || '';
+    renderNxCriteriaForm(nx);
+    document.getElementById('nxFormTitle').textContent = 'Đang sửa nhận xét ' + id;
+    document.getElementById('nxSaveBtn').textContent = 'Cập nhật nhận xét';
+    document.getElementById('nxCancelEditBtn').classList.remove('hidden');
+    document.getElementById('nxFormTitle').scrollIntoView({ behavior:'smooth', block:'center' });
+  }
+
+  function cancelEditNhanXet(){
+    editingNxId = null;
+    document.getElementById('nx_Loai').value = 'Định kỳ';
+    document.getElementById('nx_Ngay').value = '';
+    document.getElementById('nx_NhanXetKhac').value = '';
+    renderNxCriteriaForm();
+    document.getElementById('nxFormTitle').textContent = 'Thêm nhận xét mới';
+    document.getElementById('nxSaveBtn').textContent = '+ Ghi nhận xét theo mẫu';
+    document.getElementById('nxCancelEditBtn').classList.add('hidden');
+  }
+
+  async function deleteNhanXetConfirm(id){
+    if(!confirm('Xoá nhận xét ' + id + '? Không thể hoàn tác.')) return;
+    const r = await apiCall({ action:'deleteNhanXet', nxId: id });
+    if(r.status === 'ok'){
+      loadNhanXet(editingId);
+    } else {
+      alert(r.message || 'Có lỗi khi xoá nhận xét.');
+    }
+  }
+
+  async function addNhanXet(){
+    if(!editingId) return;
+    const nhanXet = { MaDangVien: editingId,
+      Loai: document.getElementById('nx_Loai').value,
+      NgayNhanXet: document.getElementById('nx_Ngay').value.trim(),
+      NhanXetKhac: document.getElementById('nx_NhanXetKhac').value.trim()
+    };
+    TIEU_CHI.forEach(tc => {
+      const checked = document.querySelector('input[name="' + tc.key + '"]:checked');
+      nhanXet[tc.key] = checked ? checked.value : '';
+    });
+    const r = editingNxId
+      ? await apiCall({ action:'updateNhanXet', nxId: editingNxId, nhanXet })
+      : await apiCall({ action:'addNhanXet', nhanXet });
+    if(r.status === 'ok'){
+      cancelEditNhanXet();
+      loadNhanXet(editingId);
+    } else {
+      alert(r.message || 'Có lỗi khi lưu nhận xét.');
+    }
+  }
+
+  function printPhieu(nx){
+    const m = members.find(x => x.ID === nx.MaDangVien) || {};
+    const tcRow = (tc) => tc.options.map(opt =>
+      '<td style="text-align:center; padding:6px 4px; font-size:14.5px;">' + escapeHtml(opt) +
+      ' &nbsp;' + (nx[tc.key] === opt ? '☒' : '☐') + '</td>'
+    ).join('');
+    const html = `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8">
+      <title>Phiếu nhận xét đảng viên</title>
+      <style>
+        body{font-family:'Times New Roman', serif; font-size:15px; color:#111; padding:30px 50px; line-height:1.6;}
+        table{width:100%; border-collapse:collapse;}
+        .letterhead td{vertical-align:top; width:50%; text-align:center; font-weight:bold;}
+        .title{text-align:center; font-weight:bold; font-size:17px; margin:22px 0 4px; text-transform:uppercase;}
+        .subtitle{text-align:center; font-style:italic; margin-bottom:16px; font-size:14.5px;}
+        .tc-block{margin:10px 0 14px;}
+        .tc-label{font-weight:normal; margin-bottom:5px; font-size:14.5px;}
+        .tc-table td{padding:5px 10px 5px 0; font-size:14.5px;}
+        .sign-table td{width:50%; text-align:center; vertical-align:top; padding-top:30px; font-weight:bold; font-size:15px;}
+        .sign-italic{font-weight:normal; font-style:italic; font-size:13.5px;}
+        @media print{ .no-print{display:none;} }
+      </style></head><body>
+      <table class="letterhead"><tr>
+        <td>ĐẢNG ỦY PHƯỜNG CẦU KIỆU<br>CHI BỘ ${escapeHtml(m.KhuPho || nx.NguoiNhanXet || '')}</td>
+        <td>ĐẢNG CỘNG SẢN VIỆT NAM<br><span style="font-weight:normal; font-style:italic;">......., ngày ...... tháng ...... năm ......</span></td>
+      </tr></table>
+      <div class="title">Phiếu nhận xét</div>
+      <div class="subtitle">đảng viên đang công tác thường xuyên giữ mối liên hệ với tổ chức đảng và nhân dân nơi cư trú</div>
+      <p>Chi ủy sau khi họp với ban công tác mặt trận khu phố thống nhất nhận xét về đảng viên
+      <b>${escapeHtml(m.HoTen || '')}</b> như sau:</p>
+      ${TIEU_CHI.map(tc => `<div class="tc-block">
+        <div class="tc-label">${escapeHtml(tc.label)}</div>
+        <table class="tc-table"><tr>${tcRow(tc)}</tr></table>
+      </div>`).join('')}
+      <div class="tc-block">
+        <div class="tc-label">7. Nhận xét khác</div>
+        <div style="border-bottom:1px dotted #999; min-height:20px;">${escapeHtml(nx.NhanXetKhac || '')}</div>
+        <div style="border-bottom:1px dotted #999; min-height:20px; margin-top:16px;">&nbsp;</div>
+      </div>
+      <table class="sign-table"><tr>
+        <td>XÁC NHẬN CỦA ĐẢNG ỦY<br>PHƯỜNG CẦU KIỆU<br><span class="sign-italic">(Ký tên, đóng dấu, ghi rõ họ và tên)</span></td>
+        <td>T/M CHI BỘ<br><span class="sign-italic">(Ký, ghi rõ họ và tên)</span></td>
+      </tr></table>
+      <div class="no-print" style="margin-top:30px; text-align:center;">
+        <button onclick="window.print()" style="padding:8px 20px; font-size:14px; cursor:pointer;">In phiếu này</button>
+      </div>
+      </body></html>`;
+    const w = window.open('', '_blank');
+    w.document.write(html);
+    w.document.close();
+  }
+
+  // ---- report ----
+  let lastReportData = null;
+
+  async function loadReport(){
+    const box = document.getElementById('reportContent');
+    box.innerHTML = '<div class="empty-state">Đang tải báo cáo...</div>';
+    const r = await apiCall({ action:'getReport' });
+    if(r.status !== 'ok'){
+      box.innerHTML = '<div class="empty-state">' + escapeHtml(r.message || 'Không tải được báo cáo.') + '</div>';
+      return;
+    }
+    lastReportData = r;
+    let html = '<div class="report-summary">' +
+      '<div class="stat-card"><div class="num">' + r.tongSo + '</div><div class="lbl">TỔNG SỐ ĐẢNG VIÊN</div></div>' +
+      '<div class="stat-card"><div class="num">' + Object.keys(r.byKhuPho).length + '</div><div class="lbl">KHU PHỐ CÓ DỮ LIỆU</div></div>' +
+      '</div>';
+    html += '<table><thead><tr><th>Khu phố</th><th>Tổng số</th><th>Đang sinh hoạt</th><th>Tạm dừng</th><th>Đã chuyển đi</th></tr></thead><tbody>';
+    Object.keys(r.byKhuPho).sort().forEach(kp => {
+      const d = r.byKhuPho[kp];
+      html += '<tr><td>' + escapeHtml(kp) + '</td><td>' + d.tong + '</td><td>' + d.dangSinhHoat + '</td><td>' + d.tamDung + '</td><td>' + d.daChuyenDi + '</td></tr>';
+    });
+    html += '</tbody></table>';
+    box.innerHTML = html;
+  }
+
+  function exportReportToWord(){
+    if(!lastReportData){ alert('Chưa có dữ liệu báo cáo để xuất.'); return; }
+    const r = lastReportData;
+    let html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+      '<head><meta charset="utf-8"><title>Báo cáo tổng hợp</title></head><body style="font-family:\'Times New Roman\',serif; font-size:14px;">';
+    html += '<h3 style="text-align:center;">BÁO CÁO TỔNG HỢP ĐẢNG VIÊN THEO QUY ĐỊNH 213-QĐ/TW</h3>';
+    html += '<p><b>Tổng số đảng viên:</b> ' + r.tongSo + ' &nbsp;&nbsp; <b>Số khu phố có dữ liệu:</b> ' + Object.keys(r.byKhuPho).length + '</p>';
+    html += '<table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse; width:100%;"><tr>' +
+      '<th>Khu phố</th><th>Tổng số</th><th>Đang sinh hoạt</th><th>Tạm dừng</th><th>Đã chuyển đi</th></tr>';
+    Object.keys(r.byKhuPho).sort().forEach(kp => {
+      const d = r.byKhuPho[kp];
+      html += '<tr><td>' + escapeHtml(kp) + '</td><td style="text-align:center;">' + d.tong + '</td>' +
+        '<td style="text-align:center;">' + d.dangSinhHoat + '</td><td style="text-align:center;">' + d.tamDung + '</td>' +
+        '<td style="text-align:center;">' + d.daChuyenDi + '</td></tr>';
+    });
+    html += '</table></body></html>';
+    const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'BaoCaoTongHop_DangVien213.doc';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+</script>
+</body>
+</html>
