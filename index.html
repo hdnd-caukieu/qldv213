@@ -27,7 +27,7 @@
   h1,h2,h3{font-family:'Noto Serif', serif; margin:0; color:var(--red-deep);}
   .app-header{
     background:linear-gradient(180deg, var(--red-deep) 0%, var(--red) 100%);
-    color:#fff; padding:10px 24px 8px;
+    color:#fff; padding:18px 24px 14px;
   }
   .app-header-inner{max-width:1100px; margin:0 auto; display:flex; align-items:center; gap:14px;}
 .star{width:150px; height:55px; flex-shrink:0;object-fit:contain;}
@@ -89,10 +89,11 @@
   .btn-add{background:var(--green); color:#fff; padding:9px 16px; font-size:14px; white-space:nowrap;}
   .btn-add:hover{background:#245139;}
 
-  table{width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--line); border-radius:4px; overflow:hidden;}
+  table{width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--line); border-radius:4px;}
   th{
     background:var(--red-deep); color:#fff; text-align:left; padding:10px 12px; font-size:12.5px;
     font-weight:600; letter-spacing:.2px; text-transform:uppercase;
+    position:sticky; top:0; z-index:1;
   }
   td{padding:10px 12px; border-top:1px solid var(--line); font-size:14px;}
   tr.member-row{cursor:pointer;}
@@ -175,6 +176,7 @@
 
 <div class="wrap">
 
+
   <!-- LOGIN -->
   <div id="loginView" class="login-card">
     <h2>Đăng nhập theo khu phố</h2>
@@ -205,6 +207,7 @@
         <input type="text" id="searchBox" placeholder="Tìm theo họ tên..." oninput="renderMembers()">
         <input type="text" id="filterKhuPho" class="hidden" list="khuPhoDatalist" placeholder="Tìm theo khu phố..." style="max-width:200px;" oninput="renderMembers()">
         <datalist id="khuPhoDatalist"></datalist>
+        <button class="btn-outline" id="btnRefresh" onclick="refreshMembers()">⟳ Cập nhật dữ liệu</button>
         <button class="btn-outline" onclick="exportToWord()">⭳ Xuất file</button>
         <button class="btn-add" onclick="openMemberModal(null)">+ Thêm đảng viên</button>
       </div>
@@ -409,6 +412,16 @@
     renderMembers();
   }
 
+  async function refreshMembers(){
+    const btn = document.getElementById('btnRefresh');
+    const oldText = btn.textContent;
+    btn.textContent = 'Đang tải...';
+    btn.disabled = true;
+    await loadMembers();
+    btn.textContent = oldText;
+    btn.disabled = false;
+  }
+
   function statusPillClass(s){
     if(s === 'Đang sinh hoạt') return 'status-active';
     if(s === 'Đã chuyển đi') return 'status-moved';
@@ -428,7 +441,9 @@
       return;
     }
     const showKhuPho = auth.vaiTro === 'Admin';
-    let html = '<div style="overflow-x:auto;"><table style="min-width:1100px;"><thead><tr><th>Họ và tên</th>' +
+    const needsScroll = filtered.length > 10;
+    const scrollStyle = needsScroll ? 'max-height:calc(100vh - 330px); overflow-y:auto; overflow-x:auto;' : 'overflow-x:auto;';
+    let html = '<div style="' + scrollStyle + '"><table style="min-width:1100px;"><thead><tr><th>Họ và tên</th>' +
       (showKhuPho ? '<th>Khu phố</th>' : '') +
       '<th>Ngày sinh</th><th>Cơ quan giới thiệu đến</th><th>Chức vụ</th><th>Ngày về</th><th>SĐT</th><th>Trạng thái</th><th>Ghi chú</th><th>Nhận xét</th></tr></thead><tbody>';
     filtered.forEach(m => {
