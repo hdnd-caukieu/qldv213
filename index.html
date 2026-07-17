@@ -31,8 +31,8 @@
   }
   .app-header-inner{max-width:1100px; margin:0 auto; display:flex; align-items:center; gap:14px;}
   .header-logo{width:150px; height:55px; flex-shrink:0; object-fit:contain;}
-  .app-header h1{color:#fff; font-size:25px; letter-spacing:.3px;}
-  .app-header .sub{font-size:15.5px; color:#F0DDBE; margin-top:2px;}
+  .app-header h1{color:#fff; font-size:19px; letter-spacing:.3px;}
+  .app-header .sub{font-size:12.5px; color:#F0DDBE; margin-top:2px;}
   .gold-rule{height:3px; background:linear-gradient(90deg, transparent, var(--gold), transparent); }
   .wrap{max-width:1800px; margin:0 auto; padding:24px;}
   .hidden{display:none !important;}
@@ -444,16 +444,16 @@
     const scrollStyle = needsScroll ? 'max-height:calc(100vh - 330px); overflow-y:auto; overflow-x:auto;' : 'overflow-x:auto;';
     let html = '<div style="' + scrollStyle + '"><table style="min-width:100%;"><thead><tr><th>Họ và tên</th>' +
       (showKhuPho ? '<th>Khu phố</th>' : '') +
-      '<th>Nơi ở hiện tại</th><th>Ngày sinh</th><th>Cơ quan giới thiệu đến</th><th>Chức vụ</th><th>Ngày về</th><th>SĐT</th><th>Trạng thái</th><th>Ghi chú</th><th>Nhận xét</th></tr></thead><tbody>';
+      '<th>Ngày sinh</th><th>Cơ quan giới thiệu đến</th><th>Chức vụ</th><th>Ngày về</th><th>Nơi ở hiện tại</th><th>SĐT</th><th>Trạng thái</th><th>Ghi chú</th><th>Nhận xét</th></tr></thead><tbody>';
     filtered.forEach(m => {
       html += '<tr class="member-row" onclick="openMemberModal(\'' + m.ID + '\',\'full\')">' +
         '<td>' + escapeHtml(m.HoTen) + '</td>' +
         (showKhuPho ? '<td>' + escapeHtml(m.KhuPho) + '</td>' : '') +
-        '<td>' + escapeHtml(m.NoiOHienTai) + '</td>' +
         '<td>' + escapeHtml(m.NgaySinh) + '</td>' +
         '<td>' + escapeHtml(m.CoQuanGioiThieu) + '</td>' +
         '<td>' + escapeHtml(m.ChucVuCoQuan) + '</td>' +
         '<td>' + escapeHtml(m.NgayGioiThieuVe) + '</td>' +
+        '<td>' + escapeHtml(m.NoiOHienTai) + '</td>' +
         '<td>' + escapeHtml(m.SoDienThoai) + '</td>' +
         '<td><span class="status-pill ' + statusPillClass(m.TrangThai) + '">' + escapeHtml(m.TrangThai) + '</span></td>' +
         '<td>' + escapeHtml(m.GhiChu) + '</td>' +
